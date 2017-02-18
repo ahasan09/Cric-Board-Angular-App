@@ -1,0 +1,47 @@
+<style>
+    .summary{
+        width: 100%;
+        padding-top: 10px;
+        margin-left: 25px;
+        margin-top: 20px;
+        margin-bottom: -5px;
+    }
+</style>
+
+<div  layout="row" layout-align="space-around center">
+    <md-card flex="33">
+        <md-card-title layout-align="center center">
+            <span class="md-headline">Choose Your Team</span>
+        </md-card-title>
+        <md-card-content>
+            <div layout="row" layout-align="start center" flex="100">
+                <md-radio-group ng-model="vm.cricCard.selectedGroupId" flex="100" >
+                        <div ng-repeat='teamGroup in vm.cricCard.teamGroups' flex layout='row'>
+                            <div flex="66" style="margin-right:5px">
+                                <md-input-container class="md-block" flex>
+                                    <label>{{teamGroup.label}}</label>
+                                    <md-select ng-model="teamGroup.selectedCountry" style="min-width: 200px;">
+                                        <md-option ng-repeat="country in teamGroup.countries" value="{{country}}">{{country}}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                            <div flex="33" style="padding: 2px;margin-top:25px">
+                                <md-radio-button ng-value="teamGroup.id" class="md-primary">
+                                    Ball First
+                                </md-radio-button>
+                            </div>
+                        </div>
+                </md-radio-group>
+            </div>
+            <md-divider></md-divider>
+            <div class="summary" flex layout="row" layout-align="space-between center">
+                <div flex-initial>
+                    <span class="title">Selected Team</span>: <span class="md-checked">{{vm.cricCard.selectedTeam()}}</span>
+                </div>
+            </div>
+        </md-card-content>
+        <md-card-actions layout="row" layout-align="center center">
+            <md-button class="md-raised md-primary" ng-disabled="!vm.cricCard.isTwoTeamSelected" ng-click="vm.cricCard.startMatch()">START</md-button>
+        </md-card-actions>
+    </md-card>
+</div>

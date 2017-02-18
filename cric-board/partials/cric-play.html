@@ -1,0 +1,41 @@
+<div  layout="row" layout-align="space-around center">
+    <md-card flex="50">
+        <md-card-title layout="column">
+            <div layout="row"style="margin:5px">
+                <div flex="20">
+                    <md-button class="md-raised md-primary" ng-disabled="vm.isMatchFinished" ng-click="vm.playCricket()">PLAY</md-button>
+                </div>
+                <div flex="40"> <span class="md-headline">{{vm.selectedCountries}}</span></div>
+                <div flex="40">
+                    <div layout="column">
+                        <div>Run : {{vm.totalRun}}</div>
+                        <div>Over : {{vm.totalOver}}</div>
+                    </div>
+                </div>
+            </div>
+        </md-card-title>
+        <md-card-content>
+            <div layout="column" flex="100">
+                <div layout="row"style="margin:5px">
+                    <div flex="20">Ball</div>
+                    <div flex="20">Run</div>
+                    <div flex="50">Comment</div>
+                </div>
+                <md-divider></md-divider>
+                <div layout="column" style="margin:5px" ng-repeat="scoreBoard in vm.filteredMainScoreBoards track by $index">
+                    <div>Over : {{scoreBoard.over}}</div>
+                    <md-divider></md-divider>
+                    <div class="summary" layout="row" ng-repeat="score in scoreBoard.scores track by $index" ng-click="vm.showSpecificBallScore(scoreBoard.matchId, scoreBoard.over,score.ball)">
+                    <div flex="20">{{score.ball}}</div>
+                    <div flex="20">{{score.run}}</div>
+                    <div flex="50">{{score.comment}}</div>
+                    </div>
+                </div>
+            </div>
+            <md-divider></md-divider>
+            <div ng-if="vm.isMatchFinished" class="summary" flex layout="row" layout-align="space-between center">
+                Match Finished!!
+            </div>
+        </md-card-content>
+    </md-card>
+</div>
