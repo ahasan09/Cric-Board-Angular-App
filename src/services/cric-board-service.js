@@ -1,9 +1,9 @@
 (function(angular) {
     'use strict';
     angular.module('cricBoardModule').service('cricBoardService',constructor);
-    constructor.$inject=['$q','scoreBoardKey','cricBoardFactory'];
+    constructor.$inject=['$q','$timeout','scoreBoardKey','cricBoardFactory'];
 
-    function constructor($q,scoreBoardKey,cricBoardFactory){
+    function constructor($q,$timeout,scoreBoardKey,cricBoardFactory){
         console.log("CricBoard Service initialize");
         var vm=this;
 
@@ -107,16 +107,17 @@
                 vm.scoreBoardObj.filteredMainScoreBoards=response;
                 deferred.resolve(vm.scoreBoardObj);
             })*/
-            setTimeout(function(){
-                return vm.scoreBoardObj;
-            },100)
+            /*setTimeout(function(){
+             return vm.scoreBoardObj;
+             },100)*/
+            return vm.scoreBoardObj;
             //return deferred.promise;
         }
         function getRandomNumber(){
             return _.random(0,6);
         }
         function playCricket(isInitializeScore,mainScoreBoards,matchId,over,ball,matchScores){
-            //var deferred = $q.defer();
+            var deferred = $q.defer();
 
             if(isInitializeScore && matchScores.length>0){
                 vm.scoreBoardObj.matchId=mainScoreBoards[mainScoreBoards.length-1].matchId;
@@ -137,12 +138,15 @@
                 vm.scoreBoardObj.over++;
             }
             //this.prepareScoreBoard(mainScoreBoards,vm.scoreBoardObj.matchId,vm.scoreBoardObj.over,vm.scoreBoardObj.ball);
-            return vm.scoreBoardObj;
+            //return vm.scoreBoardObj;
             /*this.prepareScoreBoard(mainScoreBoards,vm.scoreBoardObj.matchId,vm.scoreBoardObj.over,vm.scoreBoardObj.ball).then(function(response){
                 deferred.resolve(vm.scoreBoardObj);
-            })
+            })*/
 
-            return deferred.promise;*/
+             $timeout(function(){
+                deferred.resolve(vm.scoreBoardObj);
+             },100)
+            return deferred.promise;
 
         }
         function getScoreBoardFromLocalStorage(){

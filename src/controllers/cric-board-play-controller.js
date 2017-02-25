@@ -9,6 +9,7 @@
         var vm=this;
 
         function initializeCricBoard(){
+            cricBoardService.scoreBoardObj.isMatchFinished=false;
             vm.over=Number($state.params.over);
             vm.ball=Number($state.params.ball);
             vm.matchId=$state.params.matchId;
@@ -31,13 +32,19 @@
 
         function playCricket(){
             var matchScores=cricBoardService.getMatchSpecificScores(vm.mainScoreBoards,vm.matchId);
-            var scoreBoardResult=cricBoardService.playCricket(vm.isInitializeScore,vm.mainScoreBoards,vm.matchId,vm.over,vm.ball,matchScores);
+            var scoreBoardResult;
+                cricBoardService.playCricket(vm.isInitializeScore,vm.mainScoreBoards,vm.matchId,vm.over,vm.ball,matchScores).then(function(response){
+                    scoreBoardResult=response;
+                    cricBoardService.prepareScoreBoard(vm.mainScoreBoards,scoreBoardResult.matchId,scoreBoardResult.over,scoreBoardResult.ball);
+                    setScoreBoardData(scoreBoardResult);
+                    changeRouteParam(scoreBoardResult.matchId,scoreBoardResult.over,scoreBoardResult.ball);
+                });
 
-            cricBoardService.prepareScoreBoard(vm.mainScoreBoards,scoreBoardResult.matchId,scoreBoardResult.over,scoreBoardResult.ball);
+           /* cricBoardService.prepareScoreBoard(vm.mainScoreBoards,scoreBoardResult.matchId,scoreBoardResult.over,scoreBoardResult.ball);
 
 
             setScoreBoardData(scoreBoardResult);
-            changeRouteParam(scoreBoardResult.matchId,scoreBoardResult.over,scoreBoardResult.ball);
+            changeRouteParam(scoreBoardResult.matchId,scoreBoardResult.over,scoreBoardResult.ball);*/
 
             /*var scoreBoardResult={};
             cricBoardService.playCricket(vm.isInitializeScore,vm.mainScoreBoards,vm.matchId,vm.over,vm.ball).then(function(response){
