@@ -1,6 +1,9 @@
-(function() {
+(function(angular) {
     'use strict';
-    angular.module('cricBoardModule').service('cricBoardService', function ($http, $q) {
+    angular.module('cricBoardModule').service('cricBoardService',constructor);
+    constructor.$inject=['$q','scoreBoardKey','cricBoardFactory'];
+
+    function constructor($q,scoreBoardKey,cricBoardFactory){
         console.log("CricBoard Service initialize");
         var vm=this;
 
@@ -14,13 +17,16 @@
             isMatchFinished:false
         };
 
-        this.getMatchSpecificScores=function(mainScoreBoards,matchId){
+        function getMatchSpecificScores(mainScoreBoards,matchId){
+            //var deferred = $q.defer();
+            //deferred.resolve(angular.copy(_.filter(mainScoreBoards,function(item){return item.matchId==matchId;})));
             return angular.copy(_.filter(mainScoreBoards,function(item){return item.matchId==matchId;}));
+            //return deferred.promise;
         }
-        this.getOverSpecificScore=function(mainScoreBoards,matchId,over){
-           return _.find(mainScoreBoards,function(item){return item.over===over && item.matchId==matchId;});
+        function getOverSpecificScore(mainScoreBoards,matchId,over){
+            return _.find(mainScoreBoards,function(item){return item.over===over && item.matchId==matchId;});
         }
-        this.getBallSpecificScore=function(mainScoreBoards,matchId,over,ball){
+        function getBallSpecificScore(mainScoreBoards,matchId,over,ball){
             vm.scoreBoardObj.totalRun=0;
             var overSpecificScoreBoard= this.getOverSpecificScore(mainScoreBoards,matchId,over);
             if(overSpecificScoreBoard) {
@@ -52,9 +58,8 @@
 
             return vm.scoreBoardObj;
         }
-
-        this.prepareScoreBoard=function(mainScoreBoards,matchId,over,ball){
-
+        function prepareScoreBoard(mainScoreBoards,matchId,over,ball){
+            //var deferred = $q.defer();
             var randomRun = this.getRandomNumber();
             var scoreBoard= _.find(mainScoreBoards,function(item){return item.over===over && item.matchId==matchId;})
             if(scoreBoard){
@@ -98,18 +103,22 @@
             vm.scoreBoardObj.ball=ball;
             vm.scoreBoardObj.over=over;
             vm.scoreBoardObj.filteredMainScoreBoards=this.getMatchSpecificScores(mainScoreBoards,matchId);
+            /*this.getMatchSpecificScores(mainScoreBoards,matchId).then(function(response){
+                vm.scoreBoardObj.filteredMainScoreBoards=response;
+                deferred.resolve(vm.scoreBoardObj);
+            })*/
             setTimeout(function(){
                 return vm.scoreBoardObj;
             },100)
-
+            //return deferred.promise;
         }
-        this.getRandomNumber=function(){
+        function getRandomNumber(){
             return _.random(0,6);
         }
-        this.playCricket=function(isInitializeScore,mainScoreBoards,matchId,over,ball){
-            var deferred = $q.defer();
+        function playCricket(isInitializeScore,mainScoreBoards,matchId,over,ball,matchScores){
+            //var deferred = $q.defer();
 
-            if(isInitializeScore && this.getMatchSpecificScores(mainScoreBoards,matchId).length>0){
+            if(isInitializeScore && matchScores.length>0){
                 vm.scoreBoardObj.matchId=mainScoreBoards[mainScoreBoards.length-1].matchId;
                 vm.scoreBoardObj.over=mainScoreBoards[mainScoreBoards.length-1].over;
                 var lastScoreBoard=mainScoreBoards[mainScoreBoards.length-1];
@@ -127,29 +136,40 @@
                 vm.scoreBoardObj.ball=1;
                 vm.scoreBoardObj.over++;
             }
-            //var result=this.prepareScoreBoard(mainScoreBoards,vm.scoreBoardObj.matchId,vm.scoreBoardObj.over,vm.scoreBoardObj.ball);
-            //return vm.scoreBoardObj;
-            this.prepareScoreBoard(mainScoreBoards,vm.scoreBoardObj.matchId,vm.scoreBoardObj.over,vm.scoreBoardObj.ball).then(function(response){
+            //this.prepareScoreBoard(mainScoreBoards,vm.scoreBoardObj.matchId,vm.scoreBoardObj.over,vm.scoreBoardObj.ball);
+            return vm.scoreBoardObj;
+            /*this.prepareScoreBoard(mainScoreBoards,vm.scoreBoardObj.matchId,vm.scoreBoardObj.over,vm.scoreBoardObj.ball).then(function(response){
                 deferred.resolve(vm.scoreBoardObj);
             })
 
-            return deferred.promise;
+            return deferred.promise;*/
 
         }
-
-        this.getScoreBoardFromLocalStorage=function (){
-            return JSON.parse(localStorage.getItem('cricBoard'));
+        function getScoreBoardFromLocalStorage(){
+            return JSON.parse(localStorage.getItem(scoreBoardKey));
         }
-        this.setScoreBoardOnLocalStorage=function (mainScoreBoards){
-            localStorage.setItem('cricBoard',JSON.stringify(mainScoreBoards));
+        function setScoreBoardOnLocalStorage(mainScoreBoards){
+            localStorage.setItem(scoreBoardKey,JSON.stringify(mainScoreBoards));
         }
-        this.getSelectedCountry=function (matchId){
-            return _.find(JSON.parse(localStorage.getItem('cricMatch')),function(item){return item.matchId==matchId;});
+        function getSelectedCountry(matchId){
+            return cricBoardFactory.getSelectedCountry(matchId);
+            //return _.find(JSON.parse(localStorage.getItem('cricMatch')),function(item){return item.matchId==matchId;});
         }
-        this.isMatchFinished=function(filteredMainScoreBoards){
+        function isMatchFinished(filteredMainScoreBoards){
             if(filteredMainScoreBoards.length>0)
                 return filteredMainScoreBoards[filteredMainScoreBoards.length-1].isMatchFinished;
             return false;
         }
-    });
-})();
+
+        this.getBallSpecificScore=getBallSpecificScore;
+        this.getOverSpecificScore=getOverSpecificScore;
+        this.prepareScoreBoard=prepareScoreBoard;
+        this.getRandomNumber=getRandomNumber;
+        this.playCricket=playCricket;
+        this.getScoreBoardFromLocalStorage=getScoreBoardFromLocalStorage;
+        this.setScoreBoardOnLocalStorage=setScoreBoardOnLocalStorage;
+        this.getSelectedCountry=getSelectedCountry;
+        this.isMatchFinished=isMatchFinished;
+        this.getMatchSpecificScores=getMatchSpecificScores;
+    }
+})(window.angular);
